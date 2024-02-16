@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 SELECT
 	A.order_id,
 	B.SUB_ORDER_ID,
@@ -31,6 +30,3 @@ WHERE
 	AND A.ORDER_ID = B.ORDER_ID
 ORDER BY
 	A.CREATED_DATE;
-=======
- 
->>>>>>> 4807ab8a3ee3db070b2108c7140e90f7ccd08c76
