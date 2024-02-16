@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 SELECT
 	A.service_id,
 	A.order_id,
@@ -38,7 +37,3 @@ WHERE
 ORDER BY
 	A.CREATED_DATE DESC;
 #ORDER BY B.state_reason DESC;
-
-=======
- 
->>>>>>> 4807ab8a3ee3db070b2108c7140e90f7ccd08c76
