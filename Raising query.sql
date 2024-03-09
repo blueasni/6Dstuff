@@ -1,4 +1,4 @@
- SELECT
+SELECT
 	B.SUB_ORDER_ID,
 	A.order_id,
 	B.service_id,
