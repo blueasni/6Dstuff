@@ -1,0 +1,307 @@
+[COM
+]: : [order-orchestrator
+]: : [com-pod-2-5c787d8b4-sxxzk
+]: : [
+    2024-06-19 16: 42: 26,
+    605
+]: : [o.c.c.l.BaseLogger                       146
+]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+]: : [
+    1252979525999190016
+]: : [WARN
+]: : [APP
+]: : ENGINE-14006 Exception while executing job 7d1aaf15-2e40-11ef-9804-52adbadc2036: 
+
+in.co.sixdee.bss.com.orderorchestrator.config.exception.WorkflowTaskFailedException: Failed task execution for:NCCFetchActiveLoanDetails Caused by: 555 No success response from TIBCO QUERY BALANCE API : : NCC
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.560 PM	
+[COM
+]: : [order-orchestrator
+]: : [com-pod-2-5c787d8b4-sxxzk
+]: : [
+    2024-06-19 16: 42: 26,
+    560
+]: : [?
+]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+]: : [
+    1252979525999190016
+]: : [ERROR
+]: : [APP
+]: : ENGINE-16004 Exception while closing command context: Failed task execution for:NCCFetchActiveLoanDetails Caused by: 555 No success response from TIBCO QUERY BALANCE API : : NCC
+
+in.co.sixdee.bss.com.orderorchestrator.config.exception.WorkflowTaskFailedException: Failed task execution for:NCCFetchActiveLoanDetails Caused by: 555 No success response from TIBCO QUERY BALANCE API : : NCC
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.558 PM	
+[COM
+]: : [order-orchestrator
+]: : [com-pod-2-5c787d8b4-sxxzk
+]: : [
+    2024-06-19 16: 42: 26,
+    558
+]: : [?
+]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+]: : [
+    1252979525999190016
+]: : [ERROR
+]: : [APP
+]: : Exception in closeActivity() with cause = 'NULL' and exception = 'Failed task execution for:NCCFetchActiveLoanDetails Caused by: 555 No success response from TIBCO QUERY BALANCE API : : NCC'
+
+in.co.sixdee.bss.com.orderorchestrator.config.exception.WorkflowTaskFailedException: Failed task execution for:NCCFetchActiveLoanDetails Caused by: 555 No success response from TIBCO QUERY BALANCE API : : NCC
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.549 PM	
+[COM
+]: : [order-orchestrator
+]: : [com-pod-2-5c787d8b4-sxxzk
+]: : [
+    2024-06-19 16: 42: 26,
+    549
+]: : [?
+]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+]: : [
+    1252979525999190016
+]: : [INFO
+]: : [APP
+]: : order-orchestrator|INTERMEDIATE|ORDER|2024-06-19 16: 42: 26|Gifting-MeZLC47PT+GYJTOg1rfUiA|2024-06-19 16: 33: 18|MpesaBundlePurchase|1252979525999190016|Failed|1252979526225682432|MPESA_SuperAPP||esbuser|1256129|ET1254793|251716591255|1|2|Sefedin|||939|Daily 400MB_One_Off_MP||0|23|233||||Fetch Active Loan Details from NCC|555|No success response from TIBCO QUERY BALANCE API : : NCC|||||12274554||esbuser|||||||||||||||1|||||||||||N/A||||||1
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.544 PM	
+[COM
+]: : [order-orchestrator
+]: : [com-pod-2-5c787d8b4-sxxzk
+]: : [
+    2024-06-19 16: 42: 26,
+    544
+]: : [?
+]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+]: : [
+    1252979525999190016
+]: : [INFO
+]: : [APP
+]: : sub order status list : : [Failed
+]
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.535 PM	
+[COM
+]: : [order-orchestrator
+]: : [com-pod-2-5c787d8b4-sxxzk
+]: : [
+    2024-06-19 16: 42: 26,
+    535
+]: : [?
+]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+]: : [
+    1252979525999190016
+]: : [INFO
+]: : [APP
+]: : order-orchestrator|INTERMEDIATE|SUBORDER|2024-06-19 16: 42: 26|Gifting-MeZLC47PT+GYJTOg1rfUiA|2024-06-19 16: 33: 18|MpesaBundlePurchase|1252979525999190016|Failed|1252979526225682432|MPESA_SuperAPP||esbuser|1256129|ET1254793|251716591255|1|2|Sefedin|||939|Daily 400MB_One_Off_MP||0|23|233||||Fetch Active Loan Details from NCC|555|No success response from TIBCO QUERY BALANCE API : : NCC|||||12274554||esbuser|||||||||||||||1|||||||||||N/A||||||1
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.507 PM	
+[COM
+]: : [order-orchestrator
+]: : [com-pod-2-5c787d8b4-sxxzk
+]: : [
+    2024-06-19 16: 42: 26,
+    507
+]: : [?
+]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+]: : [
+    1252979525999190016
+]: : [INFO
+]: : [APP
+]: : Response received [status=200, headers={requestTimestamp=2024-06-19 04: 42: 25, requestId=Gifting-MeZLC47PT+GYJTOg1rfUiA_1252981822443540480, source=MPESA_SuperAPP, Content-Type=application/json
+    }, payload={
+        "serviceSpecification": [
+            {
+                "name": "eligibility",
+                "value": "false"
+            },
+            {
+                "name": "loanLimit",
+                "value": "0"
+            },
+            {
+                "name": "eligibilityAmount",
+                "value": "0"
+            }
+        ],
+        "LoanDetails": [],
+        "serviceCharacteristic": [
+            {
+                "name": "LanguageId",
+                "value": "2"
+            },
+            {
+                "name": "ToDate",
+                "value": "2024-06-19T16:42:25.747Z"
+            },
+            {
+                "name": "Start Date",
+                "value": "21-03-2024 16:42:26"
+            },
+            {
+                "name": "End Date",
+                "value": "19-06-2024 16:42:26"
+            }
+        ],
+        "LoanHistory": [],
+        "responseHeader": {
+            "requestId": "Gifting-MeZLC47PT+GYJTOg1rfUiA_1252981822443540480",
+            "responeId": "Gifting-MeZLC47PT+GYJTOg1rfUiA_1252981822443540480",
+            "responseMessage": "No success response from TIBCO QUERY BALANCE API",
+            "responseStatus": "555",
+            "responseTimestamp": "2024-06-19 16:42:26.506",
+            "source": "TIBCOERP"
+        }
+    }
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.507 PM	
+[COM
+    ]: : [order-orchestrator
+    ]: : [com-pod-2-5c787d8b4-sxxzk
+    ]: : [
+        2024-06-19 16: 42: 26,
+        507
+    ]: : [?
+    ]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+    ]: : [
+        1252979525999190016
+    ]: : [INFO
+    ]: : [APP
+    ]: : Starting status checking for activity : : NCCFetchActiveLoanDetails
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.507 PM	
+[COM
+    ]: : [order-orchestrator
+    ]: : [com-pod-2-5c787d8b4-sxxzk
+    ]: : [
+        2024-06-19 16: 42: 26,
+        507
+    ]: : [?
+    ]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+    ]: : [
+        1252979525999190016
+    ]: : [INFO
+    ]: : [APP
+    ]: : Time taken for invoking third party ncc-airtime-check: 760 milli seconds
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 26.507 PM	
+[COM
+    ]: : [order-orchestrator
+    ]: : [com-pod-2-5c787d8b4-sxxzk
+    ]: : [
+        2024-06-19 16: 42: 26,
+        507
+    ]: : [?
+    ]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+    ]: : [
+        1252979525999190016
+    ]: : [ERROR
+    ]: : [APP
+    ]: : NCCFetchActiveLoanDetails Response validation failed
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 25.747 PM	
+[COM
+    ]: : [order-orchestrator
+    ]: : [com-pod-2-5c787d8b4-sxxzk
+    ]: : [
+        2024-06-19 16: 42: 25,
+        747
+    ]: : [?
+    ]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+    ]: : [
+        1252979525999190016
+    ]: : [INFO
+    ]: : [APP
+    ]: : spec loaded successfully for spec_key NCC_AirtimeCheck
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 25.747 PM	
+[COM
+    ]: : [order-orchestrator
+    ]: : [com-pod-2-5c787d8b4-sxxzk
+    ]: : [
+        2024-06-19 16: 42: 25,
+        747
+    ]: : [?
+    ]: : [Gifting-MeZLC47PT+GYJTOg1rfUiA
+    ]: : [
+        1252979525999190016
+    ]: : [INFO
+    ]: : [APP
+    ]: : Request sending [POST http: //esb-pod-1:3083/resource-order-mgmt/safaricom/api/v1/airtimecheck/resourceOrder, third party id=ncc-airtime-check, headers={requestTimestamp=2024-06-19 04:42:25, requestId=Gifting-MeZLC47PT+GYJTOg1rfUiA_1252981822443540480, source=MPESA_SuperAPP, Content-Type=application/json}, payload={
+        "id": "251716134120",
+        "serviceCharacteristic": [
+            {
+                "name": "LanguageId",
+                "value": "2"
+Show all 10 lines
+host = 10.4.179.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 25.680 PM	
+[COM
+                ]: : [order-orchestrator
+                ]: : [com-pod-2-5bbd9d699d-zkwzv
+                ]: : [
+                    2024-06-19 16: 42: 25,
+                    680
+                ]: : [?
+                ]: : [CRM263ppnnw_1718804545926
+                ]: : [
+                    1252981821965914112
+                ]: : [INFO
+                ]: : [APP
+                ]: : Response sending back [POST /order-orchestrator/orders/skip-or-retry, client=192.0.13.68, headers=[], payload={
+                        "requestId": "CRM263ppnnw_1718804545926",
+                        "code": "200",
+                        "status": "Success",
+                        "message": "Skip/Retry request initiated successfully",
+                        "orderId": "1252979525999190016"
+                    }
+host = 10.4.79.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 25.646 PM	
+[COM
+                    ]: : [order-orchestrator
+                    ]: : [com-pod-2-5bbd9d699d-zkwzv
+                    ]: : [
+                        2024-06-19 16: 42: 25,
+                        646
+                    ]: : [?
+                    ]: : [CRM263ppnnw_1718804545926
+                    ]: : [
+                        1252981821965914112
+                    ]: : [INFO
+                    ]: : [APP
+                    ]: :  Process Instance Id : : 7d197683-2e40-11ef-9804-52adbadc2036 : : Business Key : : 1252979525999190016
+host = 10.4.79.241: 8088source = 6d-com-logsourcetype = kafka-6d-logs
+6/19/24
+4: 42: 25.633 PM	
+[COM
+                    ]: : [order-orchestrator
+                    ]: : [com-pod-2-5bbd9d699d-zkwzv
+                    ]: : [
+                        2024-06-19 16: 42: 25,
+                        633
+                    ]: : [?
+                    ]: : [CRM263ppnnw_1718804545926
+                    ]: : [
+                        1252981821965914112
+                    ]: : [INFO
+                    ]: : [APP
+                    ]: : Request received [POST /order-orchestrator/orders/skip-or-retry, client=192.0.13.68, headers=[x-request-id: "CRM263ppnnw_1718804545926", channel: "CRM", x-trace-id: "CRM263ppnnw_1718804545926", username: "asnake.mammo", useremail: "asnake.mammo@partner.safaricom.et", user-agent: "Java/11.0.16", host: "com-pod-2:3080", accept: "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2", connection: "keep-alive", content-length: "187", Content-Type: "application/json;charset=UTF-8"
+                        ], payload={
+                            "orderId": "1252979525999190016",
+                            "subOrderId": "1252979526225682432",
+                            "externalId": "CRM263ppnnw_1718804545926",
+                            "action": "retry",
+                            "stageId": "NCC_FETCH_LOAN_DETAILS"
+                        }

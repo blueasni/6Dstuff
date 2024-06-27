@@ -12,7 +12,7 @@ FROM
 	COM_SUB_ORDER_DETAILS B
 WHERE
 	A.order_id = B.order_id
-	AND A.ORDER_TYPE IN ('ConnectionMigration', 'AddService', 'Onboarding', 'ChangeSim')
+	AND A.ORDER_TYPE IN ('ConnectionMigration', 'AddService', 'Onboarding', 'ChangeSim','AdjustMainAccount', 'ChangeSubscription') 
 	AND A.ORDER_STATE != 'Completed'
-	and A.CREATED_DATE BETWEEN '2024-03-07 00:00:00' and '2024-03-08 21:30:59'
-	AND A.ORDER_ID IN ('1215543491313020928')
+	and A.CREATED_DATE BETWEEN '2024-01-05 00:00:00' and now()
+	AND A.ORDER_ID IN ("1250734490899628032")
