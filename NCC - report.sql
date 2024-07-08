@@ -9,10 +9,10 @@ SELECT
 	"Asnake" As "SPOC",
 	"" As "Comments"
 FROM
-	COM_ORDER_MASTER PARTITION(p6) A,
-	COM_SUB_ORDER_DETAILS PARTITION(p6) B
+	COM_ORDER_MASTER PARTITION(p7) A,
+	COM_SUB_ORDER_DETAILS PARTITION(p7) B
 WHERE
-	A.order_id = '1256125438257336320' AND A.order_id = B.ORDER_ID
+	A.order_id = '1259790621685993472' AND A.order_id = B.ORDER_ID
 ORDER BY
 	A.CREATED_DATE;
 	
@@ -168,3 +168,25 @@ AND DATE(ORDER_DATE) < '2024-07-04'
 GROUP BY DATE(ORDER_DATE), ORDER_STATE,ORDER_TYPE
 
 SELECT ORDER_TYPE,ORDER_STATE,count(*)from COM_ORDER_MASTER PARTITION(p7) where DATE(CREATED_DATE)=date(now())-1 and ORDER_STATE in ('Completed','Failed')  group by ORDER_TYPE,ORDER_STATE  order by ORDER_TYPE
+
+SELECT
+    ORDER_TYPE,
+    ORDER_STATE,
+---    SUM(CASE
+---            WHEN ORDER_STATE = "Completed" THEN 1
+---            ELSE 0
+---        END) AS `COMPLETED`,
+    SUM(CASE
+            WHEN ORDER_STATE = "Failed" THEN 1
+            ELSE 0
+        END) AS `FAILED`
+FROM `COM_ORDER_MASTER`
+GROUP BY ORDER_TYPE, ORDER_STATE
+
+SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*)
+FROM COM_ORDER_MASTER
+WHERE ORDER_TYPE IN ('Onboarding','Addservice','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge')
+AND ORDER_STATE IN ('Failed', 'Completed')
+AND ORDER_DATE >= '2024-07-03'
+AND ORDER_DATE < '2024-07-04'
+GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE

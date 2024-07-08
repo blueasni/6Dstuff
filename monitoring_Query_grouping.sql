@@ -89,7 +89,7 @@ WHERE
 , "600 :: Order Doesn't exist :: TIBCO"
 , '4007 ::  Initiator exceeds monthly allowed reversal. :: Subscription Management'
 )
-	AND A.CREATED_DATE BETWEEN '2024-07-07 06:00:00' and '2024-07-07 13:50:00'
+	AND A.CREATED_DATE BETWEEN '2024-07-08 21:00:00' and '2024-07-09 06:50:00'
 ORDER BY
 	A.CREATED_DATE DESC;
 #ORDER BY B.state_reason DESC;
