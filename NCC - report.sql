@@ -12,10 +12,14 @@ FROM
 	COM_ORDER_MASTER PARTITION(p7) A,
 	COM_SUB_ORDER_DETAILS PARTITION(p7) B
 WHERE
-	A.order_id = '1259790621685993472' AND A.order_id = B.ORDER_ID
+	A.order_id = '1261726737051459584' AND A.order_id = B.ORDER_ID
 ORDER BY
 	A.CREATED_DATE;
-	
+
+
+
+
+
 SELECT
 	B.SUB_ORDER_ID,
 	A.order_id,
@@ -183,10 +187,12 @@ SELECT
 FROM `COM_ORDER_MASTER`
 GROUP BY ORDER_TYPE, ORDER_STATE
 
-SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*)
+SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*) AS COUNT
 FROM COM_ORDER_MASTER
-WHERE ORDER_TYPE IN ('Onboarding','Addservice','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge')
+WHERE ORDER_TYPE IN ('Onboarding','Addservice')
 AND ORDER_STATE IN ('Failed', 'Completed')
-AND ORDER_DATE >= '2024-07-03'
-AND ORDER_DATE < '2024-07-04'
+AND ORDER_DATE >= '2024-07-09'
+AND ORDER_DATE < '2024-07-10'
 GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE
+
+WHERE ORDER_TYPE IN ('Onboarding','Addservice','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge')

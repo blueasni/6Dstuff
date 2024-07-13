@@ -121,7 +121,7 @@ def adjust_excel_column_widths(worksheet, fontname):
         column_number += 1
         column_letter = get_column_letter(column_number)
         column_width = math.ceil( max(getwidth(cell.value) for cell in column) / excel_unit_width )
-        worksheet.column_dimensions[column_letter].width = column_width
+        worksheet.column_dimensöions[column_letter].width = column_width
 #---------------------------------------------------------------------
 table.tableStyleInfo = style
 ws.add_table(table)
