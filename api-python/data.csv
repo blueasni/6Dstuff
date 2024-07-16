@@ -1,5 +1,0 @@
-ORDERED_DATE,ORDER_STATE,ORDER_TYPE,COUNT
-2024-07-11,Completed,AddService,10
-2024-07-11,Failed,AddService,20
-2024-07-11,Completed,Onboarding,3
-2024-07-11,Failed,Onboarding,6

@@ -50,6 +50,7 @@ WHERE
 	AND A.ORDER_TYPE NOT IN ('Gifting','StopAutoRenewal')
 	-- AND (B.SUB_ORDER_STATE = 'In-Progress' AND TIMESTAMPDIFF(MINUTE , A.created_date, NOW()) >10)
 	AND B.state_reason NOT LIKE '00015 :: Subscription create failed for Account ID : A_%'
+	AND B.state_reason NOT LIKE '206 :: Subscription create failed for Account ID : A_%'
 	AND B.state_reason NOT LIKE '676 :: Plan%'
 	AND B.state_reason NOT LIKE '400 :: To borrow%Birr you need to have spent at least%Birr within the last%days :: NCC'
 	AND B.state_reason NOT LIKE '400 :: Subscribe age on network of%days is less than minimum required%months  :: NCC'
@@ -88,7 +89,7 @@ WHERE
 , "600 :: Order Doesn't exist :: TIBCO"
 , '4007 ::  Initiator exceeds monthly allowed reversal. :: Subscription Management'
 )
-	AND A.CREATED_DATE BETWEEN '2024-07-13 13:00:00' and '2024-07-13 21:50:00'
+	AND A.CREATED_DATE BETWEEN '2024-07-15 13:00:00' and '2024-07-15 21:50:00'
 ORDER BY
 	A.CREATED_DATE DESC;
 #ORDER BY B.state_reason DESC;

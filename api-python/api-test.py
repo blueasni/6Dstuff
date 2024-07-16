@@ -14,6 +14,13 @@ from openpyxl.utils import get_column_letter
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.dimensions import ColumnDimension,DimensionHolder
 from sqlalchemy import text
+thin=Side(border_style="thin",color="000000")
+test = Side(border_style="double",color="ffffff")
+testBorder = Border(top=test,bottom=test,left=test,right=test)
+singleBorder= Side(border_style="thin",color="121212")
+doubleBorder = Side(border_style="double",color="008000")
+alignment = Alignment(horizontal="center",vertical="center",indent=1)
+border = Border(top=singleBorder,left=singleBorder,right=singleBorder,bottom=singleBorder)
 
 url_object = URL.create("mysql+pymysql",username="rptuserc1_ro",password="bssuser@6Dtech",host="10.3.74.22",database="WKN_COM",port=6033,)
 engine = create_engine(url_object)
@@ -32,59 +39,94 @@ ALL_ORDERS_TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORD
 TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_TYPE, ORDER_STATE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('ChangeSim','ChangeSubscription') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE >= '%s' AND ORDER_DATE < '%s' GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE;" % (YESTERDAY,TODAY))
 order_columns = ['Order_Date','Order_State','Onboarding','AddService','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge']
 df = pd.DataFrame(columns=order_columns)
-#print(df)
-print(YESTERDAY," - ",TODAY)
+ORDER_TYPE = ['Onboarding','AddService','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge']
+FINAL_ORDER = pd.DataFrame()
 api_data = pd.read_sql(TEST,connection) 
+#api_data = pd.read_excel("data.xlsx") 
+#api_data = pd.read_csv("data.csv")
 count_row = api_data.shape[0]  # Gives number of rows
 count_col = api_data.shape[1]  # Gives number of columns
-#api_data = pd.read_csv("data.csv")
-
+(r,c) = api_data.shape # r,c row and column length of api_data df
 #result = api_data[api_data['ORDER_TYPE'] == "AddService"]
-#print(result)
 #print(result.iloc[0,0]," ",result.iloc[0,1]," ",result.iloc[0,2]," ",result.iloc[0,3])
-#api_data = pd.read_excel("org.xlsx")
-#print(api_data)
-'''
-color = {'first_set':  ['a', 'b', 'c', 'd', 'e','f', 'g', 'h'],'second_set': ['VI', 'IN', 'BL', 'GR','YE', 'OR', 'RE', 'WI']}
-ROW_ORDER = {'ORDER_TYPE':['AddService','OnBoarding'],'COMPLETED': [100,200],'FAILED' : [200,400], 'TOTAL' : [300,600]}
-ORDER_DF = pd.DataFrame(ROW_ORDER,columns=['ORDER_TYPE', 'COMPLETED','FAILED','TOTAL'])
-dfr = pd.DataFrame(color, columns=['first_set', 'second_set'])
-#print(ORDER_DF)
-'''
-ORDER_TYPE = ['Onboarding','Addservice','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge']
-COMPLETED = []
-FAILED = []
-TOTAL = []
-for len in range(len(ORDER_TYPE)):
-    FAILED.append(0)
-    COMPLETED.append(0)
-    TOTAL.append(0)
-DICT = {'ORDER_TYPE': ORDER_TYPE, 'COMPLETED': COMPLETED, 'FAILED': FAILED, 'TOTAL' : TOTAL}
-FINAL_ORDER = pd.DataFrame(DICT)
-   
-print(FINAL_ORDER) 
-print(FINAL_ORDER.columns.get_loc('ORDER_TYPE'))
-cols = list(api_data.columns)
-for row in range(count_row):
-    for i in range(count_col):
-        print(api_data.iloc[row,1],end=" ")
-        order_type = api_data.iloc[row,1]
-        oeder_state = api_data.iloc[row,2]
-        state_count = api_data.iloc[row,3]
-        FINAL_ORDER.at[order_type, 'COMPLETED'] = 10
-    print()
-print(api_data)
-print(FINAL_ORDER)
+def auto_width(workb,sheet): #adjusting auto column width
+    column_widths = []
+    for row_1 in sheet.iter_rows():
+        for k, cell2 in enumerate(row_1):
+            try:
+                column_widths[k] = max(column_widths[k], len(str(cell2.value)))
+            except IndexError:
+                column_widths.append(len(str(cell2.value)))
+    for n, column_width in enumerate(column_widths):
+        sheet.column_dimensions[get_column_letter(n + 1)].width = column_width + 2
+    #workb.save("topOrder.xlsx")
+    #os.startfile("topOrder.xlsx")
+def do_border(sheet):
+    area = sheet["A1:"+ get_column_letter(sheet.max_column) + str(sheet.max_row)]
+    for row in area:
+        for cell in row:
+            cell.border = border
+            cell.alignment=alignment
+def sheet_append(sheet, data, hd):
+    #sheet.append(['Testing'])
+    for r in dataframe_to_rows(data, index=False, header=hd):
+        sheet.append(r)
+def sheet_noheader(sheet,data):
+    #for i in range(1,len(ORDER_TYPE)*2):
+    sheet.merge_cells(start_row=1, start_column=1, end_row=1, end_column=1)
+    sheet.merge_cells(start_row=1, start_column=2, end_row=1, end_column=3)
+    sheet.merge_cells(start_row=1, start_column=4, end_row=1, end_column=5)
+    sheet.merge_cells(start_row=1, start_column=6, end_row=1, end_column=7)
+    sheet.merge_cells(start_row=1, start_column=8, end_row=1, end_column=9)
+    COM_FAIL = []
+    for r in range(len(ORDER_TYPE)*2):
+        if (r % 2) == 0:
+            COM_FAIL.append('C')
+        else:
+            COM_FAIL.append('F')
+    #print(COM_FAIL)
+    sheet.append(COM_FAIL)
+    ORDER_TYPE.insert(0,'ORDER_DATE')
+    #sheet.append(ORDER_TYPE)
+    for r in dataframe_to_rows(data, index=False, header=False):
+        sheet.append(r)
+def do_orderBreakup():
+    pass
+def assemble_finalResult():
+    cols = list(api_data.columns)
+    for row in range(count_row):
+        for i in range(count_col):
+            order_date = api_data.iloc[row,0]
+            order_type = api_data.iloc[row,1]
+            order_state = api_data.iloc[row,2]
+            state_count = api_data.iloc[row,3]
+            row_num = FINAL_ORDER[FINAL_ORDER['ORDER_TYPE'] == api_data.iloc[row,1]].index[0]
+            FINAL_ORDER.at[row_num, api_data.iloc[row,2]] = api_data.iloc[row,3]
+            FINAL_ORDER.at[row_num, 'TOTAL'] = int(FINAL_ORDER.iloc[row_num,2]) + int(FINAL_ORDER.iloc[row_num,3])
+    print(api_data)
+    print(FINAL_ORDER)
+def fill_zero():
+    global FINAL_ORDER
+    ORDER_DATE = []
+    COMPLETED = []
+    FAILED = []
+    TOTAL = []
+    for leng in range(len(ORDER_TYPE)):
+        FAILED.append(0)
+        COMPLETED.append(0)
+        TOTAL.append(0)
+        ORDER_DATE.append(str(YESTERDAY))
+    DICT = {'ORDER_DATE' : ORDER_DATE,'ORDER_TYPE': ORDER_TYPE, 'Completed': COMPLETED, 'Failed': FAILED, 'TOTAL' : TOTAL}
+    FINAL_ORDER = pd.DataFrame(DICT)
+fill_zero()
+assemble_finalResult()
+#print(FINAL_ORDER.columns.get_loc('ORDER_TYPE'))
+
+
 #api_data[['Created_Date']] = api_data[['Created_Date']].astype(str)
 
 #api_data[['order_id', 'SUB_ORDER_ID']] = api_data[['order_id', 'SUB_ORDER_ID']].astype(str)
-thin=Side(border_style="thin",color="000000")
-test = Side(border_style="double",color="ffffff")
-testBorder = Border(top=test,bottom=test,left=test,right=test)
-singleBorder= Side(border_style="thin",color="121212")
-doubleBorder = Side(border_style="double",color="008000")
-alignment = Alignment(horizontal="center",vertical="center",indent=1)
-border = Border(top=singleBorder,left=singleBorder,right=singleBorder,bottom=singleBorder)
+
 #api_data = api_data.iloc[1:]
 
 #writer = pd.ExcelWriter('pandas_multiple.xlsx', engine='xlsxwriter')
@@ -95,26 +137,45 @@ border = Border(top=singleBorder,left=singleBorder,right=singleBorder,bottom=sin
 
 #--------------------------------------------------------
 wb = Workbook()
+#ws = wb.create_sheet('All_orders')
+top5failed = wb.create_sheet('TOP 5 Failed Orders')
+total_breakup_sheet = wb.create_sheet('Total Orders Breakup')
+org_order_bup = wb.create_sheet('Total Orders Breakup(org)')
+
 ws = wb.active
+
+ws.title = "All_orders"
+sheet_append(ws, FINAL_ORDER,True)
+do_border(ws)
+auto_width(wb,ws)
+#total_breakup_sheet = wb.active
+TOTAL_BUP = FINAL_ORDER.transpose()
+TOP5FAILED = FINAL_ORDER.nlargest(5,'Failed').drop(['Completed', 'TOTAL'], axis=1)
+print(TOP5FAILED)
+TOTAL_BUP = FINAL_ORDER.set_index('ORDER_TYPE').T.drop(['ORDER_DATE'],axis=0)
+TOTAL_BUP.insert(0, 'ORDER_DATE', [YESTERDAY,YESTERDAY,'TOTAL'])
+sheet_noheader(org_order_bup, TOTAL_BUP)
+
+auto_width(wb,org_order_bup)
+do_border(org_order_bup)
+
+sheet_append(total_breakup_sheet, TOTAL_BUP,True)
+sheet_append(top5failed,TOP5FAILED,True)
+
+do_border(total_breakup_sheet)
+do_border(top5failed)
+auto_width(wb,total_breakup_sheet)
+auto_width(wb,top5failed)
+
+#ORDER_BUP = pd.DataFrame()
+#for leng in range(FINAL_ORDER.shape[0] ):
+
+#total_breakup_sheet = wb.activ
+#total_breakup_sheet.title = "Total Breakup"
 #writer.save()
-def auto_width(workb,sheet): #adjusting auto column width
-    column_widths = []
-    for row in sheet.iter_rows():
-        for i, cell in enumerate(row):
-            try:
-                column_widths[i] = max(column_widths[i], len(str(cell.value)))
-            except IndexError:
-                column_widths.append(len(str(cell.value)))
-    for i, column_width in enumerate(column_widths):
-        sheet.column_dimensions[get_column_letter(i + 1)].width = column_width + 1
-    workb.save("topOrder.xlsx")
-    os.startfile("topOrder.xlsx")
-def do_border(sheet):
-    area = sheet["A1:"+ get_column_letter(sheet.max_column) + str(sheet.max_row)]
-    for row in area:
-        for cell in row:
-            cell.border = border
-            cell.alignment=alignment
+
+
+'''
 def top5_order(con = connection,query = "",sheet = ws):
     dataframes = pd.read_sql(query,con) 
     for row in dataframe_to_rows(dataframes, index=False, header=True):
@@ -129,9 +190,10 @@ def get_orders(con = connection,query = "",sheet = ws):
     datafr = pd.read_sql(query,con)
     print(datafr)
 #top5_order(query = TOP5_FAILED_ORDERS,sheet = ws)
+'''
+
 #get_orders(query = ALL_ORDERS_TEST,sheet = ws)
 #    ws.append(r)
-'''
 for row in range(2 , ws.max_row):
     ell = ws['A'+str(row)]
     ell.font = Font(name='Calibri',size=11,bold=True,italic=False, color='008000')
@@ -144,7 +206,7 @@ for i in range(1 , ws.max_column+1):
     ell.number_format = "@"
 style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,showLastColumn=False, showRowStripes=True, showColumnStripes=True)
 table = Table(displayName="API_TEST", ref="A1:" + get_column_letter(ws.max_column) + str(ws.max_row))
-'''
+
 rng = ws["A1:"+ get_column_letter(ws.max_column) + str(ws.max_row)]
 for row in rng:
     for c in row:
@@ -159,12 +221,12 @@ col_range = ws['A3:A4']
 for row in col_range:
     for c in row:
         c.fill = PatternFill(fill_type='solid',start_color='FFFF00',end_color='FFFF00')
-#table.tableStyleInfo = style
-#ws.add_table(table)
+table.tableStyleInfo = style
+ws.add_table(table)
 #auto_width(wb,ws)
 #adjust_excel_column_widths(ws, '/home/blue/openpxl/export-dataframes-to-excel/calibri.ttf')
 c = ws['A2']
 ws.freeze_panes = c
-#wb.save("table-pandas.xlsx")
-#os.startfile("table-pandas.xlsx")
-connection.close
+wb.save("api-test.xlsx")
+os.startfile("api-test.xlsx")
+#connection.close
