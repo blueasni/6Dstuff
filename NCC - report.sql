@@ -12,17 +12,13 @@ FROM
 	COM_ORDER_MASTER PARTITION(p7) A,
 	COM_SUB_ORDER_DETAILS PARTITION(p7) B
 WHERE
-	A.order_id = '1262325984393613312' AND A.order_id = B.ORDER_ID
+	A.order_id = '1267743989460062208' AND A.order_id = B.ORDER_ID
 ORDER BY
 	A.CREATED_DATE;
 
-
-
-
-
 SELECT
-	B.SUB_ORDER_ID,
 	A.order_id,
+	B.SUB_ORDER_ID,
 	B.service_id,
 	A.order_type,
 	B.sub_order_state,
@@ -37,7 +33,7 @@ WHERE
 	AND A.ORDER_TYPE IN ('ConnectionMigration', 'AddService', 'Onboarding', 'ChangeSim','AdjustMainAccount', 'ChangeSubscription') 
 	AND A.ORDER_STATE != 'Completed'
 	and A.CREATED_DATE BETWEEN '2024-01-05 00:00:00' and now()
-	AND A.ORDER_ID IN ('1256125438257336320', '', '')
+	AND A.ORDER_ID IN ('1265187731342508032')
 	
 SELECT
 	B.SUB_ORDER_ID,

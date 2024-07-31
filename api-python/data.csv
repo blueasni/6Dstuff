@@ -1,0 +1,6 @@
+ORDER_DATE,ORDER_TYPE,Completed,Failed
+2024-07-27,ChangeSim,2502,0
+2024-07-27,ChangeSim,0,25
+2024-07-27,ChangeSubscription,3,0
+2024-07-27,Onboarding,19790,0
+2024-07-27,Onboarding,0,167

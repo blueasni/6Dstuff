@@ -1,4 +1,7 @@
 set @report_date = cast('2013-01-17 00:00:00' as datetime);
+set @night = "251717165548";
+set @afternooon = "251717165548";
+set @morning = "251717165548";
 SELECT
 	A.order_id,
 	B.SUB_ORDER_ID,
@@ -18,6 +21,10 @@ SELECT
 		WHEN B.state_reason LIKE '400 :: Subscription create failed for Account ID : A_%' THEN '400 :: Subscription create failed for Account ID : A_...'
 		WHEN B.state_reason LIKE '676 :: Plan%' THEN 'Mutual exclusive plan'
 		WHEN B.state_reason LIKE 'SC0007%' THEN 'LMS -- Loyalty Management'
+		WHEN B.state_reason LIKE '500 :: Failed to provision on ME(s) KLT%' THEN '500 :: Failed to provision on ME(s) KLT1: Client received SOAP Fault from server: Error :: NCC'
+		WHEN B.state_reason LIKE '400 :: A technical error occurred while executing Patch request:Error%' THEN '400 :: A technical error occurred while executing Patch request:Error -- Read timed out :: NCC'
+		WHEN B.state_reason LIKE '404 :: MISSING_ENTITY: Entity missing: Record does not exist for these Bundle ids :%' THEN '404 :: MISSING_ENTITY: Entity missing: Record does not exist for these Bundle ids : xxxxxx. :: NCC'
+		WHEN B.state_reason LIKE '400 :: No suitable online Manage Element configured for subscriber related entities. Please contact administrator. Account :A_%' THEN '400 :: No suitable online Manage Element configured for subscriber related entities.-- NCC'
 		WHEN B.state_reason LIKE '404 :: SM_FILTER_CRITERIA_MISMATCH: No subscription matched:%' THEN '404 :: SM_FILTER_CRITERIA_MISMATCH: No subscription matched: for filter entity ::: NCC'
 		WHEN B.state_reason LIKE 'A technical error occurred while executing Patch request:Timeout acquiring locks:%' THEN 'A technical error occurred while executing Patch request:Timeout acquiring locks: [ClubNumberXXXXXX..]'
 		WHEN B.state_reason LIKE '%The subscriber has active debt :: TIBCO' THEN '400 || 555 :: The subscriber has active debt :: TIBCO'
@@ -89,7 +96,7 @@ WHERE
 , "600 :: Order Doesn't exist :: TIBCO"
 , '4007 ::  Initiator exceeds monthly allowed reversal. :: Subscription Management'
 )
-	AND A.CREATED_DATE BETWEEN '2024-07-15 13:00:00' and '2024-07-15 21:50:00'
+	AND A.CREATED_DATE BETWEEN '2024-07-31 13:00:00' and '2024-07-31 21:50:00'
 ORDER BY
 	A.CREATED_DATE DESC;
 #ORDER BY B.state_reason DESC;

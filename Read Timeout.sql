@@ -1,0 +1,23 @@
+SELECT
+	SERVICE_ID,
+	CUSTOMER_ID,
+	ORDER_ID,
+	EXTERNAL_ID,
+	CREATED_DATE,
+	STATE_REASON
+FROM
+	COM_ORDER_MASTER PARTITION(p7)
+WHERE
+	LAST_MODIFIED_DATE BETWEEN '2024-07-01 00:00:00' AND '2024-07-17 23:59:59'
+	AND ORDER_TYPE = 'MpesaBundlePurchase'
+	AND ORDER_STATE != 'Completed'
+	and STATE_REASON = '424 :: Read timed out while invoking third party :: TIBCO';
+	
+
+SELECT
+"Serial",COUNT(*)
+FROM
+	COM_ORDER_MASTER
+WHERE
+	order_state = 'Acknowledged'
+	AND created_date BETWEEN '2024-07-28 06:30:00' and '2024-07-28 22:30:00'

@@ -152,3 +152,32 @@ auto_width(wb,ws)
 wb.save("table-pandas.xlsx")
 #===================================================
 
+import pandas as pd
+
+df = pd.read_csv('data.csv')
+
+print(df.to_string())
+duplicated = df[df.duplicated("ORDER_TYPE")]
+count_row = duplicated.shape[0]
+unique = df.drop_duplicates(subset=["ORDER_TYPE"]).reset_index(drop=True)
+for row in range(count_row):
+    ot = duplicated.iloc[row,1]
+    oc = duplicated.iloc[row,2]
+    of = duplicated.iloc[row,3]
+    result = unique[unique['ORDER_TYPE'] == ot]
+    unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Completed')] = unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Completed')] + oc
+    unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Failed')] = unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Failed')] + of
+
+
+'''
+ORDER_DATE,ORDER_TYPE,Completed,Failed
+2024-07-27,ChangeSim,2502,0
+2024-07-27,ChangeSim,0,25
+2024-07-27,ChangeSubscription,3,0
+2024-07-27,Onboarding,19790,0
+2024-07-27,Onboarding,0,167
+2024-07-27,AddSubscription,19790,0
+2024-07-27,AddSubscription,20,167
+2024-07-27,AddService,19790,50
+2024-07-27,AddService,10,167
+'''

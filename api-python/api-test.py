@@ -36,12 +36,16 @@ ONBOARDING = text("SELECT DATE(ORDER_DATE) AS ORDER_DATE,ORDER_STATE,COUNT(*) AS
 COMPLETED = text("SELECT (SELECT count(*) FROM patients WHERE order_state='Completed' AND DATE(ORDER_DATE)>='2024-07-02' AND ORDER_TYPE='onboarding') AS Completed, (SELECT count(*) FROM patients WHERE order_state='Failed' AND DATE(ORDER_DATE)>='2024-07-02' AND ORDER_TYPE='onboarding') AS Failed")
 ALL_ORDERS = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('Onboarding','Addservice','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE >= {0} AND ORDER_DATE < {1} GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE".format(YESTERDAY,TODAY))
 ALL_ORDERS_TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('Onboarding','Addservice') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE BETWEEN {0} and {1} GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE;".format(YESTERDAY,TODAY))
-TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_TYPE, ORDER_STATE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('ChangeSim','ChangeSubscription') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE >= '%s' AND ORDER_DATE < '%s' GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE;" % (YESTERDAY,TODAY))
+TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_TYPE, ORDER_STATE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('ChangeSim','ChangeSubscription','Onboarding') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE >= '%s' AND ORDER_DATE < '%s' GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE;" % (YESTERDAY,TODAY))
 order_columns = ['Order_Date','Order_State','Onboarding','AddService','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge']
 df = pd.DataFrame(columns=order_columns)
 ORDER_TYPE = ['Onboarding','AddService','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge']
 FINAL_ORDER = pd.DataFrame()
+copier = pd.DataFrame()
 api_data = pd.read_sql(TEST,connection) 
+api_data_opt = pd.DataFrame
+TRAV = []
+VAL = []
 #api_data = pd.read_excel("data.xlsx") 
 #api_data = pd.read_csv("data.csv")
 count_row = api_data.shape[0]  # Gives number of rows
@@ -68,30 +72,37 @@ def do_border(sheet):
             cell.border = border
             cell.alignment=alignment
 def sheet_append(sheet, data, hd):
-    #sheet.append(['Testing'])
     for r in dataframe_to_rows(data, index=False, header=hd):
         sheet.append(r)
 def sheet_noheader(sheet,data):
-    #for i in range(1,len(ORDER_TYPE)*2):
-    sheet.merge_cells(start_row=1, start_column=1, end_row=1, end_column=1)
-    sheet.merge_cells(start_row=1, start_column=2, end_row=1, end_column=3)
-    sheet.merge_cells(start_row=1, start_column=4, end_row=1, end_column=5)
-    sheet.merge_cells(start_row=1, start_column=6, end_row=1, end_column=7)
-    sheet.merge_cells(start_row=1, start_column=8, end_row=1, end_column=9)
     COM_FAIL = []
+    col_a = sheet.column_dimensions['A']
+    col_a.fill = PatternFill(fill_type='solid', fgColor='C0C0C0')
+    count = 1
+    mod_order_type=ORDER_TYPE
+    for x in range(2, len(ORDER_TYPE)*2, 2):
+        sheet.merge_cells(start_row=1, start_column=x, end_row=1, end_column=x+1)
+        sheet[get_column_letter(x)+str(1)] = mod_order_type[count]
+        count +=1
+    mod_order_type.insert(0," ")
     for r in range(len(ORDER_TYPE)*2):
         if (r % 2) == 0:
             COM_FAIL.append('C')
         else:
             COM_FAIL.append('F')
-    #print(COM_FAIL)
+    COM_FAIL.insert(0," ")
     sheet.append(COM_FAIL)
-    ORDER_TYPE.insert(0,'ORDER_DATE')
-    #sheet.append(ORDER_TYPE)
     for r in dataframe_to_rows(data, index=False, header=False):
         sheet.append(r)
 def do_orderBreakup():
-    pass
+    global TRAV, VAL
+    TRAV = TOTAL_BUP.drop(TOTAL_BUP.index[2],axis=0)
+    TRAV = TRAV.drop(TRAV.columns[[1]],axis = 1)
+    VAL = []
+    for i in range(TRAV.shape[1]):
+        VAL.append(TRAV.iloc[0,i])
+        VAL.append(TRAV.iloc[1,i])
+    VAL.insert(0,YESTERDAY)
 def assemble_finalResult():
     cols = list(api_data.columns)
     for row in range(count_row):
@@ -103,26 +114,62 @@ def assemble_finalResult():
             row_num = FINAL_ORDER[FINAL_ORDER['ORDER_TYPE'] == api_data.iloc[row,1]].index[0]
             FINAL_ORDER.at[row_num, api_data.iloc[row,2]] = api_data.iloc[row,3]
             FINAL_ORDER.at[row_num, 'TOTAL'] = int(FINAL_ORDER.iloc[row_num,2]) + int(FINAL_ORDER.iloc[row_num,3])
-    print(api_data)
+    #print(api_data)
     print(FINAL_ORDER)
+
+def copier():
+    global copier,api_data_opt
+    orderdate = ['%s' % YESTERDAY for s in ORDER_TYPE]
+    compl, failed, compl = [0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE)
+    col_header = {'ORDER_DATE' : orderdate, 'ORDER_TYPE' : ORDER_TYPE, 'Completed' : compl, 'Failed' : failed}
+    copier = pd.DataFrame(col_header)
+    api_data_opt = pd.DataFrame({'ORDER_DATE' : [], 'ORDER_TYPE' : [], 'Completed' : [], 'Failed' : []})
+    print(api_data_opt)
+    #for row in range(count_col):
+    for i in range(count_row):
+        od = api_data.iloc[i , 0]
+        ot = api_data.iloc[i , 1]
+        os = api_data.iloc[i , 2]
+        co = api_data.iloc[i , 3]        
+        print(od," || ",ot," || ",os," || ",co)
+        if os == 'Completed':
+            os = co
+            co = 0
+        else:
+            os = 0
+        list = [od, ot,os,co]
+        api_data_opt.loc[len(api_data_opt)] = list
+    print("api data optimized")
+    print(api_data_opt)
+    #print(api_data_opt[(api_data_opt['attempts'] < 2) & (df['score'] > 15)])
+    only_failed = api_data_opt[(api_data_opt['Failed'] > 0)]
+    only_completed = api_data_opt[(api_data_opt['Completed'] > 0)]
+    duplicate_rows = df[df[['ORDER_TYPE']].duplicated()]
+    for i in range(len(duplicate_rows)):
+         ot = api_data[api_data['ORDER_TYPE'] == only_failed.iloc[i,0]]
+         ot.iloc[0,3] = only_failed.iloc[i,3]
+    print("Completed")
+    print(only_completed)
+    print("Faild")
+    print(only_failed)
+    for row in range(count_row):
+        for i in range(count_col):
+            one = api_data.iloc[i,1]
+            two = api_data.iloc[i,2]
+            three = api_data.iloc[i,3]
+            #print(one," ",two," ",three)
+            #match = copier[copier['ORDER_TYPE'] == api_data.iloc[row,1]].index[0]
+            #copier.at[match, api_data.iloc[row,2]] = api_data.iloc[row,3]
+            #copier.at[match, 'TOTAL'] = int(FINAL_ORDER.iloc[row_num,2]) + int(FINAL_ORDER.iloc[row_num,3])
+    #copier.merge(api_data, on=['ORDER_TYPE','price'], how='left')
 def fill_zero():
     global FINAL_ORDER
-    ORDER_DATE = []
-    COMPLETED = []
-    FAILED = []
-    TOTAL = []
-    for leng in range(len(ORDER_TYPE)):
-        FAILED.append(0)
-        COMPLETED.append(0)
-        TOTAL.append(0)
-        ORDER_DATE.append(str(YESTERDAY))
+    ORDER_DATE, COMPLETED, FAILED, TOTAL = [0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE)
     DICT = {'ORDER_DATE' : ORDER_DATE,'ORDER_TYPE': ORDER_TYPE, 'Completed': COMPLETED, 'Failed': FAILED, 'TOTAL' : TOTAL}
     FINAL_ORDER = pd.DataFrame(DICT)
+copier()
 fill_zero()
 assemble_finalResult()
-#print(FINAL_ORDER.columns.get_loc('ORDER_TYPE'))
-
-
 #api_data[['Created_Date']] = api_data[['Created_Date']].astype(str)
 
 #api_data[['order_id', 'SUB_ORDER_ID']] = api_data[['order_id', 'SUB_ORDER_ID']].astype(str)
@@ -139,61 +186,54 @@ assemble_finalResult()
 wb = Workbook()
 #ws = wb.create_sheet('All_orders')
 top5failed = wb.create_sheet('TOP 5 Failed Orders')
-total_breakup_sheet = wb.create_sheet('Total Orders Breakup')
+total_breakup_sheet = wb.create_sheet('Total_Orders_Breakup')
 org_order_bup = wb.create_sheet('Total Orders Breakup(org)')
-
+test_sheet = wb.create_sheet('Test_sheet')
+total_Orders_breakup = wb.create_sheet('Total Orders breakup')
+transpo = wb.create_sheet('Transpose')
+cop = wb.create_sheet('Copier')
 ws = wb.active
 
 ws.title = "All_orders"
 sheet_append(ws, FINAL_ORDER,True)
 do_border(ws)
 auto_width(wb,ws)
-#total_breakup_sheet = wb.active
 TOTAL_BUP = FINAL_ORDER.transpose()
+
 TOP5FAILED = FINAL_ORDER.nlargest(5,'Failed').drop(['Completed', 'TOTAL'], axis=1)
 print(TOP5FAILED)
 TOTAL_BUP = FINAL_ORDER.set_index('ORDER_TYPE').T.drop(['ORDER_DATE'],axis=0)
+
+do_orderBreakup()
 TOTAL_BUP.insert(0, 'ORDER_DATE', [YESTERDAY,YESTERDAY,'TOTAL'])
 sheet_noheader(org_order_bup, TOTAL_BUP)
-
 auto_width(wb,org_order_bup)
 do_border(org_order_bup)
 
 sheet_append(total_breakup_sheet, TOTAL_BUP,True)
-sheet_append(top5failed,TOP5FAILED,True)
-
 do_border(total_breakup_sheet)
-do_border(top5failed)
 auto_width(wb,total_breakup_sheet)
+
+sheet_append(top5failed,TOP5FAILED,True)
+do_border(top5failed)
 auto_width(wb,top5failed)
 
-#ORDER_BUP = pd.DataFrame()
-#for leng in range(FINAL_ORDER.shape[0] ):
+auto_width(wb,test_sheet)
+do_border(test_sheet)
+sheet_append(test_sheet,TRAV,False)
 
-#total_breakup_sheet = wb.activ
-#total_breakup_sheet.title = "Total Breakup"
-#writer.save()
+auto_width(wb,transpo)
+do_border(transpo)
+sheet_append(transpo,api_data,True)
 
+auto_width(wb,cop)
+do_border(cop)
+sheet_append(cop,api_data_opt,True)
 
-'''
-def top5_order(con = connection,query = "",sheet = ws):
-    dataframes = pd.read_sql(query,con) 
-    for row in dataframe_to_rows(dataframes, index=False, header=True):
-        sheet.append(row)
-    style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,showLastColumn=False, showRowStripes=True, showColumnStripes=True)
-    table = Table(displayName="API_TEST", ref="A1:" + get_column_letter(sheet.max_column) + str(sheet.max_row))
-    do_border(sheet)
-    table.tableStyleInfo = style
-    sheet.add_table(table)
-    auto_width(wb,sheet)
-def get_orders(con = connection,query = "",sheet = ws):
-    datafr = pd.read_sql(query,con)
-    print(datafr)
-#top5_order(query = TOP5_FAILED_ORDERS,sheet = ws)
-'''
+sheet_noheader(total_Orders_breakup,pd.DataFrame({"order" : VAL}).transpose())
+auto_width(wb,total_Orders_breakup)
+do_border(total_Orders_breakup)
 
-#get_orders(query = ALL_ORDERS_TEST,sheet = ws)
-#    ws.append(r)
 for row in range(2 , ws.max_row):
     ell = ws['A'+str(row)]
     ell.font = Font(name='Calibri',size=11,bold=True,italic=False, color='008000')
