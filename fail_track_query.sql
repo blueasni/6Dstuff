@@ -1,3 +1,4 @@
+use WKN_COM;
 SELECT
 	A.order_id,
 	B.SUB_ORDER_ID,
@@ -8,7 +9,7 @@ SELECT
 	A.created_date,
 	A.CHANNEL,
 	'Asnake' As Name_,
-	'2024-07-30 13:30:00' AS St_TIme,
+	'2024-09-07 21:30:00' AS St_TIme,
 	CASE 
 	   WHEN B.state_reason LIKE '400 :: Service Details already exist for serviceId : %' THEN 'The Service is already active'
 		WHEN B.state_reason = '1503 :: Service limit reached for a profile :: Billing' THEN 'limit reached'
@@ -31,14 +32,14 @@ SELECT
 		-- ELSE 'YES'
 	END AS WA
 	FROM
-	COM_ORDER_MASTER PARTITION(p7) A,
-	COM_SUB_ORDER_DETAILS PARTITION(p7) B
+	COM_ORDER_MASTER PARTITION(p9) A,
+	COM_SUB_ORDER_DETAILS PARTITION(p9) B
 WHERE
 	B.SUB_ORDER_STATE != 'Completed'
 	AND B.state_reason != 'Waiting for Bank Callback'
 	AND B.Sub_order_state != 'In-Progress'
 	AND A.ORDER_TYPE in ('Onboarding', 'AddService', 'TransferOfService', 'ChangeSim', 'TerminateService', 'ChangeSubscription', 'UpdateStarterPackKYC', 'HardUnbarring', 'HardBarring', 'SoftUnbarring', 'SoftBarring', 'AddServiceToNewAccount', 'ConnectionMigration')
-	AND A.CREATED_DATE BETWEEN '2024-07-31 13:30:00' and '2024-07-31 21:30:00'
+	AND A.CREATED_DATE BETWEEN '2024-09-07 13:30:00' and '2024-09-07 21:30:00'
 	AND A.ORDER_ID = B.ORDER_ID
 ORDER BY
 	A.CREATED_DATE;

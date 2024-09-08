@@ -14,6 +14,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.worksheet.dimensions import ColumnDimension,DimensionHolder
 from sqlalchemy import text
+from pygnuplot import gnuplot
 thin=Side(border_style="thin",color="000000")
 test = Side(border_style="double",color="ffffff")
 testBorder = Border(top=test,bottom=test,left=test,right=test)
@@ -23,6 +24,9 @@ alignment = Alignment(horizontal="center",vertical="center",indent=1)
 border = Border(top=singleBorder,left=singleBorder,right=singleBorder,bottom=singleBorder)
 
 url_object = URL.create("mysql+pymysql",username="rptuserc1_ro",password="bssuser@6Dtech",host="10.3.74.22",database="WKN_COM",port=6033,)
+url_object_2 = URL.create("mysql+pymysql",username="rptuserc2_ro",password="bssuser@6Dtech",host="10.3.74.22",database="WKN_COM",port=6044,)
+url_object_3 = URL.create("mysql+pymysql",username="rptuserc3_ro",password="bssuser@6Dtech",host="10.3.74.22",database="WKN_COM",port=6055,)
+
 engine = create_engine(url_object)
 connection = engine.connect()
 PARTITION = 'p'+str(date.today().month)
@@ -36,14 +40,20 @@ ONBOARDING = text("SELECT DATE(ORDER_DATE) AS ORDER_DATE,ORDER_STATE,COUNT(*) AS
 COMPLETED = text("SELECT (SELECT count(*) FROM patients WHERE order_state='Completed' AND DATE(ORDER_DATE)>='2024-07-02' AND ORDER_TYPE='onboarding') AS Completed, (SELECT count(*) FROM patients WHERE order_state='Failed' AND DATE(ORDER_DATE)>='2024-07-02' AND ORDER_TYPE='onboarding') AS Failed")
 ALL_ORDERS = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('Onboarding','Addservice','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE >= {0} AND ORDER_DATE < {1} GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE".format(YESTERDAY,TODAY))
 ALL_ORDERS_TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('Onboarding','Addservice') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE BETWEEN {0} and {1} GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE;".format(YESTERDAY,TODAY))
-TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_TYPE, ORDER_STATE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('ChangeSim','ChangeSubscription','Onboarding') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE >= '%s' AND ORDER_DATE < '%s' GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE;" % (YESTERDAY,TODAY))
+ORDER_TYPE = ['AddService','AddSubscription','CancelSubscription','ChangeSim','Onboarding','StopAutoRenewal','UpdateLanguage','AddServiceToNewAccount','AdjustMainAccount','BlockVoucher','BookDeposit','ChangeSubscription','CreateDocument','CreateIdentification','DeviceBlacklistWhitelist','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','LockMpesa','MakePayment','MoveToFWA','NumberRecycle','ResumeService','SuspendService','TransferOfService','UpdateBucket','UpdateProfile','UnlockMpesa','UpdateCreditLimit','UpdateService','VoucherRecharge']
+
+TEST = text("SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_TYPE, ORDER_STATE, COUNT(*) AS COUNT FROM COM_ORDER_MASTER WHERE ORDER_TYPE IN ('AddService','AddSubscription','CancelSubscription','ChangeSim','Onboarding','StopAutoRenewal','UpdateLanguage','AddServiceToNewAccount','AdjustMainAccount','BlockVoucher','BookDeposit','ChangeSubscription','CreateDocument','CreateIdentification','DeviceBlacklistWhitelist','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','LockMpesa','MakePayment','MoveToFWA','NumberRecycle','ResumeService','SuspendService','TransferOfService','UpdateBucket','UpdateProfile','UnlockMpesa','UpdateCreditLimit','UpdateService','VoucherRecharge') AND ORDER_STATE IN ('Failed', 'Completed') AND ORDER_DATE >= '%s' AND ORDER_DATE < '%s' GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE;" % (YESTERDAY,TODAY))
+ALL_API_QUERY=text("select APINAME,count(*) from APIGW_RPT where DATE(PROCESS_DATE)=DATE(CURRENT_DATE)-1 group by APINAME order by APINAME;")
+TOP5_ALL_API_QUERY=text("select APINAME,count(*) from APIGW_RPT where DATE(PROCESS_DATE)=date(current_date)-1 and APINAME in ('QueryPlan','getBasicDetails','searchNumber','ProductOffering','add-subscription') group by APINAME;")
 order_columns = ['Order_Date','Order_State','Onboarding','AddService','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge']
 df = pd.DataFrame(columns=order_columns)
-ORDER_TYPE = ['Onboarding','AddService','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge']
 FINAL_ORDER = pd.DataFrame()
 copier = pd.DataFrame()
 api_data = pd.read_sql(TEST,connection) 
+#ALL_API = pd.read_sql(ALL_API_QUERY,connection) 
+#TOP5_ALL_API = pd.read_sql(TOP5_ALL_API_QUERY,connection) 
 api_data_opt = pd.DataFrame
+unique = pd.DataFrame
 TRAV = []
 VAL = []
 #api_data = pd.read_excel("data.xlsx") 
@@ -107,15 +117,15 @@ def assemble_finalResult():
     cols = list(api_data.columns)
     for row in range(count_row):
         for i in range(count_col):
-            order_date = api_data.iloc[row,0]
-            order_type = api_data.iloc[row,1]
-            order_state = api_data.iloc[row,2]
-            state_count = api_data.iloc[row,3]
+            #order_date = api_data.iloc[row,0]
+            #order_type = api_data.iloc[row,1]
+            #order_state = api_data.iloc[row,2]
+            #state_count = api_data.iloc[row,3]
             row_num = FINAL_ORDER[FINAL_ORDER['ORDER_TYPE'] == api_data.iloc[row,1]].index[0]
+            FINAL_ORDER['ORDER_DATE'] = YESTERDAY
+            #FINAL_ORDER['ORDER_DATE'] = pd.Series([YESTERDAY for x in range(len(FINAL_ORDER.index))])
             FINAL_ORDER.at[row_num, api_data.iloc[row,2]] = api_data.iloc[row,3]
             FINAL_ORDER.at[row_num, 'TOTAL'] = int(FINAL_ORDER.iloc[row_num,2]) + int(FINAL_ORDER.iloc[row_num,3])
-    #print(api_data)
-    print(FINAL_ORDER)
 
 def copier():
     global copier,api_data_opt
@@ -123,61 +133,60 @@ def copier():
     compl, failed, compl = [0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE)
     col_header = {'ORDER_DATE' : orderdate, 'ORDER_TYPE' : ORDER_TYPE, 'Completed' : compl, 'Failed' : failed}
     copier = pd.DataFrame(col_header)
-    api_data_opt = pd.DataFrame({'ORDER_DATE' : [], 'ORDER_TYPE' : [], 'Completed' : [], 'Failed' : []})
-    print(api_data_opt)
-    #for row in range(count_col):
-    for i in range(count_row):
+    api_data_opt = pd.DataFrame({'ORDER_DATE' : [], 'ORDER_TYPE' : [], 'Completed' : [], 'Failed' : []})    
+    for i in range(api_data.shape[0]):
         od = api_data.iloc[i , 0]
         ot = api_data.iloc[i , 1]
         os = api_data.iloc[i , 2]
-        co = api_data.iloc[i , 3]        
-        print(od," || ",ot," || ",os," || ",co)
+        co = api_data.iloc[i , 3]       
         if os == 'Completed':
             os = co
             co = 0
         else:
             os = 0
         list = [od, ot,os,co]
-        api_data_opt.loc[len(api_data_opt)] = list
-    print("api data optimized")
-    print(api_data_opt)
-    #print(api_data_opt[(api_data_opt['attempts'] < 2) & (df['score'] > 15)])
-    only_failed = api_data_opt[(api_data_opt['Failed'] > 0)]
-    only_completed = api_data_opt[(api_data_opt['Completed'] > 0)]
-    duplicate_rows = df[df[['ORDER_TYPE']].duplicated()]
-    for i in range(len(duplicate_rows)):
-         ot = api_data[api_data['ORDER_TYPE'] == only_failed.iloc[i,0]]
-         ot.iloc[0,3] = only_failed.iloc[i,3]
-    print("Completed")
-    print(only_completed)
-    print("Faild")
-    print(only_failed)
-    for row in range(count_row):
-        for i in range(count_col):
-            one = api_data.iloc[i,1]
-            two = api_data.iloc[i,2]
-            three = api_data.iloc[i,3]
-            #print(one," ",two," ",three)
-            #match = copier[copier['ORDER_TYPE'] == api_data.iloc[row,1]].index[0]
-            #copier.at[match, api_data.iloc[row,2]] = api_data.iloc[row,3]
-            #copier.at[match, 'TOTAL'] = int(FINAL_ORDER.iloc[row_num,2]) + int(FINAL_ORDER.iloc[row_num,3])
-    #copier.merge(api_data, on=['ORDER_TYPE','price'], how='left')
+        #api_data_opt.loc[len(api_data_opt)] = list
+        #api_data_opt.append({list})
+
+    duplicated = api_data_opt[api_data_opt.duplicated("ORDER_TYPE")]
+    count_r = duplicated.shape[0]
+    unique = api_data_opt.drop_duplicates(subset=["ORDER_TYPE"]).reset_index(drop=True)
+    for r in range(count_r):
+        ot = duplicated.iloc[r,1]
+        oc = duplicated.iloc[r,2]
+        of = duplicated.iloc[r,3]
+        result = unique[unique['ORDER_TYPE'] == ot]
+        print(result)
+        unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Completed')] = unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Completed')] + oc
+        unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Failed')] = unique.iat[unique.loc[unique['ORDER_TYPE'] == ot].index[0], unique.columns.get_loc('Failed')] + of
 def fill_zero():
     global FINAL_ORDER
     ORDER_DATE, COMPLETED, FAILED, TOTAL = [0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE),[0] * len(ORDER_TYPE)
     DICT = {'ORDER_DATE' : ORDER_DATE,'ORDER_TYPE': ORDER_TYPE, 'Completed': COMPLETED, 'Failed': FAILED, 'TOTAL' : TOTAL}
     FINAL_ORDER = pd.DataFrame(DICT)
+def onboarding():
+    onboard = FINAL_ORDER[FINAL_ORDER['ORDER_TYPE'] == 'Onboarding']
+    onb = pd.DataFrame()
+    for r in range(len(onboard)):
+        DICT = {'ORDER_DATE' : ['Completed','Failed'],onboard.iloc[r,0]:[onboard.iloc[r,2],onboard.iloc[r,3]]}
+        onb = pd.DataFrame(DICT)
+    return onb
+def total_orders():
+    completed_sum = 0
+    failed_sum=0
+    for r in range(len(FINAL_ORDER)):
+        completed_sum = completed_sum + int(FINAL_ORDER.iloc[r,2])
+        failed_sum = failed_sum + int(FINAL_ORDER.iloc[r,3])
+    DICT = {'ORDER_DATE' : ['Completed','Failed'],FINAL_ORDER.iloc[r,0]:[completed_sum,failed_sum]}
+    total = pd.DataFrame(DICT)
+    return total
 copier()
 fill_zero()
 assemble_finalResult()
 #api_data[['Created_Date']] = api_data[['Created_Date']].astype(str)
-
 #api_data[['order_id', 'SUB_ORDER_ID']] = api_data[['order_id', 'SUB_ORDER_ID']].astype(str)
-
 #api_data = api_data.iloc[1:]
-
 #writer = pd.ExcelWriter('pandas_multiple.xlsx', engine='xlsxwriter')
-
 #api_data.to_excel(writer, sheet_name='Sheet1')  # Default position, cell A1.
 #api_data.to_excel(writer, sheet_name='Sheet1', startcol=4)
 #api_data.to_excel(writer, sheet_name='Sheet1', startcol=7)
@@ -192,6 +201,11 @@ test_sheet = wb.create_sheet('Test_sheet')
 total_Orders_breakup = wb.create_sheet('Total Orders breakup')
 transpo = wb.create_sheet('Transpose')
 cop = wb.create_sheet('Copier')
+onboard_sheet = wb.create_sheet('Onboarding')
+fine = wb.create_sheet('Final All Orders')
+tot_orders = wb.create_sheet('Total Orders')
+all_api_sheet = wb.create_sheet('ALL API')
+top5_api_sheet = wb.create_sheet('Top 5 API')
 ws = wb.active
 
 ws.title = "All_orders"
@@ -201,7 +215,6 @@ auto_width(wb,ws)
 TOTAL_BUP = FINAL_ORDER.transpose()
 
 TOP5FAILED = FINAL_ORDER.nlargest(5,'Failed').drop(['Completed', 'TOTAL'], axis=1)
-print(TOP5FAILED)
 TOTAL_BUP = FINAL_ORDER.set_index('ORDER_TYPE').T.drop(['ORDER_DATE'],axis=0)
 
 do_orderBreakup()
@@ -217,6 +230,7 @@ auto_width(wb,total_breakup_sheet)
 sheet_append(top5failed,TOP5FAILED,True)
 do_border(top5failed)
 auto_width(wb,top5failed)
+top5failed.merge_cells(start_row=2, start_column=1, end_row=6, end_column=1)
 
 auto_width(wb,test_sheet)
 do_border(test_sheet)
@@ -228,11 +242,34 @@ sheet_append(transpo,api_data,True)
 
 auto_width(wb,cop)
 do_border(cop)
-sheet_append(cop,api_data_opt,True)
+#sheet_append(cop,unique,True)
 
 sheet_noheader(total_Orders_breakup,pd.DataFrame({"order" : VAL}).transpose())
 auto_width(wb,total_Orders_breakup)
 do_border(total_Orders_breakup)
+
+sheet_append(fine,FINAL_ORDER,True)
+auto_width(wb,fine)
+do_border(fine)
+
+#onboarding(onboard_sheet)
+sheet_append(onboard_sheet,onboarding(),True)
+auto_width(wb,onboard_sheet)
+do_border(onboard_sheet)
+
+sheet_append(tot_orders,total_orders(),True)
+auto_width(wb,tot_orders)
+do_border(tot_orders)
+
+'''
+sheet_append(all_api_sheet,total_orders(),True)
+auto_width(wb,all_api_sheet)
+do_border(all_api_sheet)
+
+sheet_append(top5_api_sheet,total_orders(),True)
+auto_width(wb,top5_api_sheet)
+do_border(top5_api_sheet)
+'''
 
 for row in range(2 , ws.max_row):
     ell = ws['A'+str(row)]

@@ -1,3 +1,4 @@
+use WKN_COM;
 SELECT 
 	B.service_id,
 	A.created_date,
@@ -9,10 +10,10 @@ SELECT
 	"Asnake" As "SPOC",
 	"" As "Comments"
 FROM
-	COM_ORDER_MASTER PARTITION(p7) A,
-	COM_SUB_ORDER_DETAILS PARTITION(p7) B
+	COM_ORDER_MASTER PARTITION(p9) A,
+	COM_SUB_ORDER_DETAILS PARTITION(p9) B
 WHERE
-	A.order_id = '1267743989460062208' AND A.order_id = B.ORDER_ID
+	A.order_id = '1281572795734839296' AND A.order_id = B.ORDER_ID
 ORDER BY
 	A.CREATED_DATE;
 
@@ -30,10 +31,10 @@ FROM
 	COM_SUB_ORDER_DETAILS B
 WHERE
 	A.order_id = B.order_id
-	AND A.ORDER_TYPE IN ('ConnectionMigration', 'AddService', 'Onboarding', 'ChangeSim','AdjustMainAccount', 'ChangeSubscription') 
+	AND A.ORDER_TYPE IN ('ConnectionMigration', 'AddService', 'Onboarding', 'ChangeSim','AdjustMainAccount', 'ChangeSubscription','TerminateService','TransferOfService') 
 	AND A.ORDER_STATE != 'Completed'
 	and A.CREATED_DATE BETWEEN '2024-01-05 00:00:00' and now()
-	AND A.ORDER_ID IN ('1265187731342508032')
+	AND A.ORDER_ID IN ('1275397462544084993')
 	
 SELECT
 	B.SUB_ORDER_ID,
@@ -186,9 +187,9 @@ GROUP BY ORDER_TYPE, ORDER_STATE
 SELECT DATE(ORDER_DATE) AS ORDERED_DATE, ORDER_STATE,ORDER_TYPE, COUNT(*) AS COUNT
 FROM COM_ORDER_MASTER
 WHERE ORDER_TYPE IN ('Onboarding','Addservice')
-AND ORDER_STATE IN ('Failed', 'Completed')
-AND ORDER_DATE >= '2024-07-09'
-AND ORDER_DATE < '2024-07-10'
+AND ORDER_STATE IN ('Failed')
+AND ORDER_DATE >= '2024-09-01'
+AND ORDER_DATE < '2024-09-07'
 GROUP BY ORDERED_DATE, ORDER_STATE,ORDER_TYPE
 
 WHERE ORDER_TYPE IN ('Onboarding','Addservice','AddServiceToNewAccount','AddSubscription','BlockVoucher','BookDeposit','AdjustMainAccount','CancelSubscription','ChangeSim','ChangeSubscription','CreateDocument','CreateIdentification','Gifting','HardBarring','LifeCycleSync','LifeCycleSyncTermination','LineBarring','LineUnBarring','MakePayment','MoveToFWA','NumberRecycle','ResumeService''StopAutoRenewal','SuspendService','TransferOfService','UpdateBucket','UpdateCreditLimit','UpdateLanguage','UpdateProfile','UnlockMpesa','UpdateService','DeviceBlacklistWhitelist','VoucherRecharge')
