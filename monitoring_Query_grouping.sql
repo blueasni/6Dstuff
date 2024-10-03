@@ -19,6 +19,7 @@ SELECT
 		ELSE A.CHANNEL
 	END AS MPESA,
 	CASE
+		WHEN B.state_reason IN ('424 :: Read timed out while invoking third party :: Loyalty Management','425 :: Connection refused while invoking third party :: Loyalty Management') THEN 'Connection refused || Read time out -- LMS'
 		WHEN B.state_reason LIKE '400 :: Subscription create failed for Account ID : A_%' THEN '400 :: Subscription create failed for Account ID : A_...'
 		WHEN B.state_reason LIKE '958 :: status_duplicate_subscription_id :: Subscription Management' THEN 'Work around at BSS'
 		WHEN B.state_reason LIKE '676 :: Plan%' THEN 'Mutual exclusive plan'
@@ -53,6 +54,7 @@ SELECT
 		WHEN B.state_reason LIKE '%No success response from TIBCO QUERY BALANCE API :: TIBCO' THEN 'No success response from TIBCO QUERY BALANCE API :: TIBCO'
 		WHEN B.state_reason LIKE '400 :: Failed to provision : Error Reference Number: DEVICE_%' THEN 'Raising issue -- to NCC'
 		WHEN B.state_reason LIKE '500 :: Failed to provision : Error Reference Number: ACCOUNT_%' THEN 'Raising issue -- to NCC'
+		WHEN B.state_reason LIKE '400 :: Failed to provision : Error Reference Number: DEVICE_%' THEN 'Raising issue -- to NCC'
 		WHEN B.state_reason LIKE "424 :: Read timed out while invoking third party%" THEN '424 :: Read timed out while invoking third party'		
 		WHEN B.state_reason LIKE '658 :: This operation is not allowed since customer has an active loan%' THEN 'customer has an active loan'
 		WHEN B.state_reason LIKE '555 :: Client received a 5xx response for invocation at resource path%' THEN '555 :: Client received a 5xx response for invocation at resource path'		
@@ -108,8 +110,7 @@ WHERE
 , '1 :: Declined -The service request is processed successfully. :: NCC'
 , '4007 ::  Initiator exceeds monthly allowed reversal. :: Subscription Management'
 )
-	AND A.CREATED_DATE BETWEEN '2024-09-08 13:00:00' and '2024-09-08 21:50:00'
-ORDER BY
-	A.CREATED_DATE DESC;
+	AND A.CREATED_DATE BETWEEN '2024-09-30 06:00:00' and '2024-09-30 13:50:00'
+ORDER BY A.CREATED_DATE DESC;
 #ORDER BY B.state_reason DESC;
 
